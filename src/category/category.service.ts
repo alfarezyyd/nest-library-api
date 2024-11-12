@@ -1,26 +1,76 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import PrismaService from '../common/prisma.service';
+import ValidationService from '../common/validation.service';
+import { CategoryValidation } from './category.validation';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly validationService: ValidationService,
+  ) {}
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    const validatedCategoryValidationDto = this.validationService.validate(
+      CategoryValidation.SAVE,
+      createCategoryDto,
+    );
+    await this.prismaService.$transaction(async (prismaTransaction) => {
+      await prismaTransaction.category.create({
+        data: validatedCategoryValidationDto,
+      });
+    });
     return 'This action adds a new category';
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    return this.prismaService.category.findMany({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number) {
+    return this.prismaService.category.findMany({
+      where: {
+        id,
+      },
+      include: {
+        Book: true,
+      },
+    });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const validatedUpdateCategoryDto = this.validationService.validate(
+      CategoryValidation.SAVE,
+      updateCategoryDto,
+    );
+    return this.prismaService.$transaction(async (prismaTransaction) => {
+      await prismaTransaction.category
+        .findFirstOrThrow({
+          where: {
+            id,
+          },
+        })
+        .catch(() => {
+          throw new NotFoundException('Category not found');
+        });
+      await prismaTransaction.category.update({
+        where: {
+          id,
+        },
+        data: validatedUpdateCategoryDto,
+      });
+      return true;
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    await this.prismaService.category.delete({
+      where: {
+        id,
+      },
+    });
+    return true;
   }
 }
