@@ -1,26 +1,61 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import PrismaService from '../common/prisma.service';
+import ValidationService from '../common/validation.service';
+import { BookValidation } from './book.validation';
 
 @Injectable()
 export class BookService {
-  create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly validationService: ValidationService,
+  ) {}
+
+  async create(createBookDto: CreateBookDto): Promise<boolean> {
+    const validatedCreateBookDto = this.validationService.validate(
+      BookValidation.SAVE,
+      createBookDto,
+    );
+    await this.prismaService.book.create({
+      data: validatedCreateBookDto,
+    });
+    return true;
   }
 
-  findAll() {
-    return `This action returns all book`;
+  async findAll() {
+    return this.prismaService.book.findMany({
+      include: {
+        category: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  async findOne(id: number) {
+    return this.prismaService.book.findFirstOrThrow({
+      where: { id },
+      include: {
+        category: true,
+      },
+    });
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
+  async update(id: number, updateBookDto: UpdateBookDto) {
+    const validatedUpdateBookDto = this.validationService.validate(
+      BookValidation.SAVE,
+      updateBookDto,
+    );
+    await this.prismaService.book.update({
+      where: { id },
+      data: validatedUpdateBookDto,
+    });
+    return true;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async remove(id: number) {
+    await this.prismaService.book.delete({
+      where: { id },
+    });
+    return true;
   }
 }
