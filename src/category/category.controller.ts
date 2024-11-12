@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
+  Put,
   Post,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
@@ -14,7 +14,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { WebResponse } from '../model/web.response';
 import { Category } from '@prisma/client';
 
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
@@ -49,7 +49,7 @@ export class CategoryController {
     };
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
