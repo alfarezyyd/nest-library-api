@@ -8,20 +8,23 @@ import {
   Post,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { Public } from './decorator/public.decorator';
 
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
+  @Public()
   @Post()
-  signIn(@Body() createAuthenticationDto: SignUpDto) {
-    return this.authenticationService.handleSignIn(createAuthenticationDto);
+  signIn(@Body() signIn: SignInDto) {
+    return this.authenticationService.handleSignIn(signIn);
   }
 
-  @Get()
-  findAll() {
+  @Public()
+  @Post()
+  signUp() {
     return this.authenticationService.findAll();
   }
 

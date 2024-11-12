@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
@@ -13,7 +13,7 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async handleSignIn(signUpDto: SignUpDto) {
+  async handleSignIn(signUpDto: SignInDto) {
     const userPrisma: User = await this.userService.findOne(signUpDto.email);
     await bcrypt.compare(
       signUpDto.password,
