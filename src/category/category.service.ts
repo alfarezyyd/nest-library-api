@@ -12,35 +12,42 @@ export class CategoryService {
     private readonly validationService: ValidationService,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto) {
+  async create(createCategoryDto: CreateCategoryDto): Promise<boolean> {
     const validatedCategoryValidationDto = this.validationService.validate(
       CategoryValidation.SAVE,
       createCategoryDto,
     );
-    await this.prismaService.$transaction(async (prismaTransaction) => {
+    return this.prismaService.$transaction(async (prismaTransaction) => {
       await prismaTransaction.category.create({
         data: validatedCategoryValidationDto,
       });
+      return true;
     });
-    return 'This action adds a new category';
   }
 
   async findAll() {
     return this.prismaService.category.findMany({});
   }
 
-  async findOne(id: number) {
-    return this.prismaService.category.findMany({
-      where: {
-        id,
-      },
-      include: {
-        Book: true,
-      },
-    });
+  async findOne(id: number): Promise<any> {
+    return this.prismaService.category
+      .findFirst({
+        where: {
+          id,
+        },
+        include: {
+          Book: true,
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('Category not found');
+      });
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<boolean> {
     const validatedUpdateCategoryDto = this.validationService.validate(
       CategoryValidation.SAVE,
       updateCategoryDto,
