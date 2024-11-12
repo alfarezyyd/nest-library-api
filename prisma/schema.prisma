@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id   BigInt @id @default(autoincrement()) @db.UnsignedBigInt
+  name String @db.VarChar(255)
+  Book Book[]
+
+  @@map("categories")
+}
+
+model Book {
+  id              BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  categoryId      BigInt         @db.UnsignedBigInt
+  category        Category       @relation(fields: [categoryId], references: [id])
+  title           String         @db.VarChar(255)
+  author          String         @db.VarChar(255)
+  publisher       String         @db.VarChar(255)
+  publicationYear String         @map("publicaton_year") @db.VarChar(10)
+  pagesAmount     Int            @map("pages_amount") @db.UnsignedInt
+  description     String         @db.Text
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @default(now()) @map("updated_at")
+  Loan            Loan[]
+  UserActivity    UserActivity[]
+
+  @@map("books")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  fullName         String             @map("full_name") @db.VarChar(255)
+  email            String             @db.VarChar(255)
+  password         String             @db.VarChar(255)
+  role             Role               @default(MEMBER)
+  profilePath      String             @map("profile_path") @db.VarChar(255)
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @map("updated_at")
+  Loan             Loan[]
+  UserActivity     UserActivity[]
+  UserNotification UserNotification[]
+}
+
+enum LoanStatus {
+  BORROWED
+  RETURNED
+}
+
+model Loan {
+  id         BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
+  userId     BigInt     @map("user_id") @db.UnsignedBigInt
+  user       User       @relation(fields: [userId], references: [id])
+  bookId     BigInt     @map("book_id") @db.UnsignedBigInt
+  book       Book       @relation(fields: [bookId], references: [id])
+  loanDate   DateTime   @map("loan_date") @db.Date
+  returnDate DateTime   @map("return_date") @db.Date
+  loanStatus LoanStatus @default(BORROWED) @map("loan_status")
+  amercement Int        @default(0) @db.UnsignedInt
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @default(now()) @map("updated_at")
+
+  @@map("loans")
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement()) @db.UnsignedSmallInt
+  name  String @db.VarChar(255)
+  value String @db.VarChar(255)
+}
+
+model UserActivity {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  userId     BigInt   @map("user_id") @db.UnsignedBigInt
+  user       User     @relation(fields: [userId], references: [id])
+  bookId     BigInt   @map("book_id") @db.UnsignedBigInt
+  book       Book     @relation(fields: [bookId], references: [id])
+  activityAt DateTime @default(now())
+}
+
+enum UserNotificationStatus {
+  UNREAD
+  READ
+}
+
+model UserNotification {
+  id                 BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  userId             BigInt                 @map("user_id") @db.UnsignedBigInt
+  user               User                   @relation(fields: [userId], references: [id])
+  message            String                 @db.VarChar(255)
+  sendAt             DateTime               @default(now()) @map("send_at")
+  notificationStatus UserNotificationStatus @default(UNREAD) @map("notification_status")
+}
