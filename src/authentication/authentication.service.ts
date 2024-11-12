@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { SignInDto } from './dto/sign-in.dto';
-import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
@@ -24,9 +24,8 @@ export class AuthenticationService {
         }
       },
     );
-    const payloadJwt = userPrisma;
     return {
-      accessToken: await this.jwtService.signAsync(payloadJwt),
+      accessToken: await this.jwtService.signAsync(userPrisma),
     };
   }
 
@@ -38,7 +37,7 @@ export class AuthenticationService {
     return `This action returns a #${id} authentication`;
   }
 
-  update(id: number, updateAuthenticationDto: UpdateAuthenticationDto) {
+  update(id: number, updateAuthenticationDto: SignUpDto) {
     return `This action updates a #${id} authentication`;
   }
 
