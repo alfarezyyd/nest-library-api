@@ -1,11 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { SignUpDto } from './dto/sign-up.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { UserService } from '../user/user.service';
+import { User } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthenticationService {
-  create(createAuthenticationDto: CreateAuthenticationDto) {
-    return 'This action adds a new authentication';
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async handleSignIn(signUpDto: SignUpDto) {
+    const userPrisma: User = await this.userService.findOne(signUpDto.email);
+    await bcrypt.compare(
+      signUpDto.password,
+      userPrisma.password,
+      (err: any, result: any) => {
+        if (!result) {
+          throw new BadRequestException('Password is incorrect');
+        }
+      },
+    );
+    const payloadJwt = userPrisma;
+    return {
+      accessToken: await this.jwtService.signAsync(payloadJwt),
+    };
   }
 
   findAll() {
