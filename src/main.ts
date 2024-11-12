@@ -8,6 +8,10 @@ async function bootstrap() {
   // Exception Filter
   app.useGlobalFilters(new PrismaExceptionFilter());
   app.useGlobalFilters(new ValidationExceptionFilter());
+
+  BigInt.prototype['toJSON'] = function () {
+    return this.toString();
+  };
   await app.listen(3000);
 }
 
