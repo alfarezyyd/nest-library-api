@@ -71,7 +71,7 @@ model Loan {
   bookId     BigInt     @map("book_id") @db.UnsignedBigInt
   book       Book       @relation(fields: [bookId], references: [id])
   loanDate   DateTime   @map("loan_date") @db.Date
-  returnDate DateTime   @map("return_date") @db.Date
+  returnDate DateTime?  @map("return_date") @db.Date
   loanStatus LoanStatus @default(BORROWED) @map("loan_status")
   amercement Int        @default(0) @db.UnsignedInt
   createdAt  DateTime   @default(now()) @map("created_at")
