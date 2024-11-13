@@ -31,7 +31,7 @@ export class BookService {
     await this.prismaService.book.create({
       data: {
         ...validatedCreateBookDto,
-
+        imagePath: generatedFilePath,
       },
     });
     return true;
