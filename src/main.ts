@@ -12,7 +12,9 @@ async function bootstrap() {
   BigInt.prototype['toJSON'] = function () {
     return this.toString();
   };
-  await app.listen(3000);
+
+  app.enableCors();
+  await app.listen(3001);
 }
 
 bootstrap();
