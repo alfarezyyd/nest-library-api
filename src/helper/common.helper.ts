@@ -24,4 +24,19 @@ export class CommonHelper {
     );
     return generatedSingleFileName;
   }
+
+  static async compareImagesFromUpload(
+    firstImagePath: string,
+    secondImageFile: Express.Multer.File,
+  ) {
+    if (firstImagePath === null) {
+      return true;
+    }
+    const firstImage = await fsPromises.readFile(firstImagePath);
+
+    const firstImageBase64 = firstImage.toString('base64');
+    const secondImageBase64 = secondImageFile.buffer.toString('base64');
+
+    return firstImageBase64 === secondImageBase64;
+  }
 }
