@@ -1,48 +1,30 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { SignInDto } from './dto/sign-in.dto';
-import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { SignUpDto } from './dto/sign-up.dto';
 import { Public } from './decorator/public.decorator';
+import { WebResponse } from '../model/web.response';
+import { ResponseAuthenticationDto } from './dto/response-authentication.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Public()
-  @Post()
-  signIn(@Body() signIn: SignInDto) {
+  @Post('sign-in')
+  async signIn(@Body() signIn: SignInDto) {
     return this.authenticationService.handleSignIn(signIn);
   }
 
   @Public()
-  @Post()
-  signUp() {
-    return this.authenticationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authenticationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAuthenticationDto: UpdateAuthenticationDto,
-  ) {
-    return this.authenticationService.update(+id, updateAuthenticationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authenticationService.remove(+id);
+  @Post('sign-up')
+  async signUp(
+    @Body() signUp: SignUpDto,
+  ): Promise<WebResponse<ResponseAuthenticationDto>> {
+    return {
+      result: {
+        data: await this.authenticationService.handleSignUp(signUp),
+      },
+    };
   }
 }

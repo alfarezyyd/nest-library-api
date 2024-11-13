@@ -5,6 +5,7 @@ import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { ResponseAuthenticationDto } from './dto/response-authentication.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -29,8 +30,11 @@ export class AuthenticationService {
     };
   }
 
-  findAll() {
-    return `This action returns all authentication`;
+  async handleSignUp(signUpDto: SignUpDto): Promise<ResponseAuthenticationDto> {
+    const userPrisma: User = await this.userService.create({ ...signUpDto });
+    return {
+      accessToken: await this.jwtService.signAsync(userPrisma),
+    };
   }
 
   findOne(id: number) {
