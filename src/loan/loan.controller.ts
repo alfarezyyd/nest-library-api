@@ -15,7 +15,7 @@ import { User } from '@prisma/client';
 import { WebResponse } from '../model/web.response';
 import { UpdateLoanDto } from './dto/update-loan.dto';
 
-@Controller('loan')
+@Controller('loans')
 export class LoanController {
   constructor(private readonly loanService: LoanService) {}
 
