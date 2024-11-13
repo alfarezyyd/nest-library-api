@@ -6,6 +6,7 @@ import { CategoryModule } from './category/category.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { UserModule } from './user/user.module';
 import { LoanModule } from './loan/loan.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LoanModule } from './loan/loan.module';
     AuthenticationModule,
     UserModule,
     LoanModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
