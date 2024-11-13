@@ -13,7 +13,11 @@ export class AuthenticationController {
   @Public()
   @Post('sign-in')
   async signIn(@Body() signIn: SignInDto) {
-    return this.authenticationService.handleSignIn(signIn);
+    return {
+      result: {
+        data: await this.authenticationService.handleSignIn(signIn),
+      },
+    };
   }
 
   @Public()
