@@ -23,19 +23,19 @@ model Category {
 }
 
 model Book {
-  id              BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
-  categoryId      BigInt         @db.UnsignedBigInt
-  category        Category       @relation(fields: [categoryId], references: [id])
-  title           String         @db.VarChar(255)
-  author          String         @db.VarChar(255)
-  publisher       String         @db.VarChar(255)
-  publicationYear String         @map("publicaton_year") @db.VarChar(10)
-  pagesAmount     Int            @map("pages_amount") @db.UnsignedInt
-  description     String         @db.Text
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @default(now()) @map("updated_at")
+  id              BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  categoryId      BigInt   @db.UnsignedBigInt
+  category        Category @relation(fields: [categoryId], references: [id])
+  title           String   @db.VarChar(255)
+  author          String   @db.VarChar(255)
+  publisher       String   @db.VarChar(255)
+  publicationYear String   @map("publicaton_year") @db.VarChar(10)
+  pagesAmount     Int      @map("pages_amount") @db.UnsignedInt
+  description     String   @db.Text
+  imagePath       String   @db.VarChar(255)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @map("updated_at")
   Loan            Loan[]
-  UserActivity    UserActivity[]
 
   @@map("books")
 }
@@ -55,7 +55,6 @@ model User {
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @map("updated_at")
   Loan             Loan[]
-  UserActivity     UserActivity[]
   UserNotification UserNotification[]
 }
 
