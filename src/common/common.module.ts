@@ -5,11 +5,16 @@ import PrismaService from './prisma.service';
 import ValidationService from './validation.service';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterService } from './multer.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    MulterModule.registerAsync({
+      useClass: MulterService,
     }),
     WinstonModule.forRoot({
       level: 'debug',
