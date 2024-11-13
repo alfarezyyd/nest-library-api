@@ -52,10 +52,15 @@ export class BookController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @Param('id') id: string,
+    @Body() updateBookDto: UpdateBookDto,
+    @UploadedFile() uploadedFile: Express.Multer.File,
+  ) {
     return {
       result: {
-        data: await this.bookService.update(+id, updateBookDto),
+        data: await this.bookService.update(+id, updateBookDto, uploadedFile),
       },
     };
   }

@@ -56,14 +56,43 @@ export class BookService {
     });
   }
 
-  async update(id: number, updateBookDto: UpdateBookDto) {
+  async update(
+    id: number,
+    updateBookDto: UpdateBookDto,
+    uploadedFile: Express.Multer.File,
+  ) {
     const validatedUpdateBookDto = this.validationService.validate(
       BookValidation.SAVE,
       updateBookDto,
     );
+    const bookPrisma: Book = await this.prismaService.book
+      .findFirstOrThrow({
+        where: { id },
+      })
+      .catch(() => {
+        throw new NotFoundException('Book not found');
+      });
+    const isImageSame = await CommonHelper.compareImagesFromUpload(
+      `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+      uploadedFile,
+    );
+    let imagePath = bookPrisma.imagePath;
+    if (!isImageSame) {
+      fs.unlinkSync(
+        `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+      );
+      imagePath = await CommonHelper.handleSaveFile(
+        this.configService,
+        uploadedFile,
+        'books-resources',
+      );
+    }
     await this.prismaService.book.update({
       where: { id },
-      data: validatedUpdateBookDto,
+      data: {
+        ...validatedUpdateBookDto,
+        imagePath,
+      },
     });
     return true;
   }
