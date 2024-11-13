@@ -7,23 +7,28 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { WebResponse } from '../model/web.response';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('books')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createBookDto: CreateBookDto,
+    @UploadedFile() uploadedFile: Express.Multer.File,
   ): Promise<WebResponse<boolean>> {
     return {
       result: {
-        data: await this.bookService.create(createBookDto),
+        data: await this.bookService.create(uploadedFile, createBookDto),
       },
     };
   }

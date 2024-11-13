@@ -4,21 +4,35 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import PrismaService from '../common/prisma.service';
 import ValidationService from '../common/validation.service';
 import { BookValidation } from './book.validation';
+import { CommonHelper } from '../helper/common.helper';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class BookService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly validationService: ValidationService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async create(createBookDto: CreateBookDto): Promise<boolean> {
+  async create(
+    uploadedFile: Express.Multer.File,
+    createBookDto: CreateBookDto,
+  ): Promise<boolean> {
     const validatedCreateBookDto = this.validationService.validate(
       BookValidation.SAVE,
       createBookDto,
     );
+    const generatedFilePath = await CommonHelper.handleSaveFile(
+      this.configService,
+      uploadedFile,
+      'books-resources',
+    );
     await this.prismaService.book.create({
-      data: validatedCreateBookDto,
+      data: {
+        ...validatedCreateBookDto,
+
+      },
     });
     return true;
   }
