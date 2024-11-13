@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import PrismaService from '../common/prisma.service';
@@ -6,6 +6,8 @@ import ValidationService from '../common/validation.service';
 import { BookValidation } from './book.validation';
 import { CommonHelper } from '../helper/common.helper';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'node:fs';
+import { Book } from '@prisma/client';
 
 @Injectable()
 export class BookService {
@@ -67,6 +69,18 @@ export class BookService {
   }
 
   async remove(id: number) {
+    const bookPrisma: Book = await this.prismaService.book
+      .findFirstOrThrow({
+        where: {
+          id,
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('Book not found');
+      });
+    fs.unlinkSync(
+      `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+    );
     await this.prismaService.book.delete({
       where: { id },
     });
