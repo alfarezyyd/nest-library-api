@@ -8,7 +8,7 @@ export class NotificationService {
   constructor(private readonly prismaService: PrismaService) {}
 
   handleTriggerNotification(currentUser: User) {
-    const loanPrisma: Loan[] = this.prismaService.loan.findMany({
+    this.prismaService.loan.findMany({
       where: {
         userId: currentUser.id,
         loanStatus: LoanStatus.BORROWED,
