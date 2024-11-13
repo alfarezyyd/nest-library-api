@@ -86,15 +86,6 @@ model Setting {
   value String @db.VarChar(255)
 }
 
-model UserActivity {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  userId     BigInt   @map("user_id") @db.UnsignedBigInt
-  user       User     @relation(fields: [userId], references: [id])
-  bookId     BigInt   @map("book_id") @db.UnsignedBigInt
-  book       Book     @relation(fields: [bookId], references: [id])
-  activityAt DateTime @default(now())
-}
-
 enum UserNotificationStatus {
   UNREAD
   READ
