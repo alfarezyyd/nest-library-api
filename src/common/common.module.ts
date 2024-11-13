@@ -8,7 +8,9 @@ import * as winston from 'winston';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     WinstonModule.forRoot({
       level: 'debug',
       format: winston.format.combine(
