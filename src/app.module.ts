@@ -8,7 +8,13 @@ import { UserModule } from './user/user.module';
 import { LoanModule } from './loan/loan.module';
 
 @Module({
-  imports: [BookModule, CategoryModule, AuthenticationModule, UserModule, LoanModule],
+  imports: [
+    BookModule,
+    CategoryModule,
+    AuthenticationModule,
+    UserModule,
+    LoanModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
