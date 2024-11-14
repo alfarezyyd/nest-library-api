@@ -51,10 +51,11 @@ export class GoogleAuthenticationService {
         email: userData.email,
       },
     });
+    console.log(userData);
     if (!userPrisma) {
       userPrisma = await this.prismaService.user.create({
         data: {
-          fullName: userData['fullName'],
+          fullName: userData['name'],
           email: userData['email'],
         },
       });

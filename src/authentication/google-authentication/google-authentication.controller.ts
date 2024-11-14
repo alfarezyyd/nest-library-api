@@ -2,14 +2,14 @@ import { Controller, Get, Query, Redirect } from '@nestjs/common';
 import { GoogleAuthenticationService } from './google-authentication.service';
 import { Public } from '../decorator/public.decorator';
 
-@Controller('authentication/google')
+@Controller('authentication')
 export class GoogleAuthenticationController {
   constructor(
     private readonly googleAuthenticationService: GoogleAuthenticationService,
   ) {}
 
   @Public()
-  @Get('')
+  @Get('google')
   @Redirect('', 301)
   async redirectGoogleAuthentication() {
     return {
@@ -18,7 +18,7 @@ export class GoogleAuthenticationController {
   }
 
   @Public()
-  @Get('callback')
+  @Get('google-redirect')
   @Redirect('', 302)
   async handleGoogleAuthenticationCallback(@Query('code') code: string) {
     const generatedAccessToken =
