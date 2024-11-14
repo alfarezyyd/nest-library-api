@@ -64,7 +64,11 @@ export class LoanController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loanService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return {
+      result: {
+        data: await this.loanService.remove(+id),
+      },
+    };
   }
 }

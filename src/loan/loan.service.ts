@@ -101,7 +101,11 @@ export class LoanService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} loan`;
+  async remove(id: number) {
+    await this.prismaService.loan.delete({
+      where: {
+        id: id,
+      },
+    });
   }
 }
