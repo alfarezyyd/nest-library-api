@@ -65,6 +65,15 @@ export class BookController {
     };
   }
 
+  @Get('categories/(:id)')
+  async findAllByCategoryId(@Param('id', ParseIntPipe) id: number) {
+    return {
+      result: {
+        data: await this.bookService.findAllByCategoryId(id),
+      },
+    };
+  }
+
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return {

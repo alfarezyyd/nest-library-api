@@ -115,4 +115,12 @@ export class BookService {
     });
     return true;
   }
+
+  async findAllByCategoryId(id: number) {
+    return this.prismaService.book.findMany({
+      where: {
+        categoryId: id,
+      },
+    });
+  }
 }
