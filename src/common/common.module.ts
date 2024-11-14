@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import PrismaService from './prisma.service';
 import ValidationService from './validation.service';
@@ -7,6 +7,8 @@ import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import { MulterModule } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
+import { HttpModule } from '@nestjs/axios';
+import { AxiosService } from './axios.service';
 
 @Module({
   imports: [
@@ -31,8 +33,13 @@ import { MulterService } from './multer.service';
         }),
       ],
     }),
+    HttpModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useClass: AxiosService,
+    }),
   ],
   providers: [PrismaService, ValidationService],
-  exports: [PrismaService, ValidationService],
+  exports: [PrismaService, ValidationService, HttpModule],
 })
 export class CommonModule {}
