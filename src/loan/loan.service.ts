@@ -31,6 +31,15 @@ export class LoanService {
         .catch(() => {
           throw new NotFoundException('User not found');
         });
+      await prismaTransaction.book
+        .findFirstOrThrow({
+          where: {
+            id: validatedCreateLoanDto.bookId,
+          },
+        })
+        .catch(() => {
+          throw new NotFoundException('Book not found');
+        });
       await prismaTransaction.loan.create({
         data: {
           ...validatedCreateLoanDto,
