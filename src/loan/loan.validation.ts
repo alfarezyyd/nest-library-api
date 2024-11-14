@@ -2,7 +2,7 @@ import { z, ZodType } from 'zod';
 
 export class LoanValidation {
   static readonly SAVE: ZodType = z.object({
-    bookId: z.number().gte(1),
+    bookId: z.coerce.number().gte(1),
     loanDate: z
       .string()
       .refine((val) => !isNaN(Date.parse(val)), {
