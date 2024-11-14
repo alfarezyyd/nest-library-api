@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UploadedFile,
@@ -51,11 +52,23 @@ export class InformationController {
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: string,
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateInformationDto: UpdateInformationDto,
-  ) {
-    return this.informationService.update(+id, updateInformationDto);
+    @UploadedFile() uploadedFile: Express.Multer.File,
+    @CurrentUser() currentUser: User,
+  ): Promise<WebResponse<boolean>> {
+    return {
+      result: {
+        data: await this.informationService.update(
+          +id,
+          updateInformationDto,
+          uploadedFile,
+          currentUser,
+        ),
+      },
+    };
   }
 
   @Delete(':id')
