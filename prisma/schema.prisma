@@ -33,6 +33,7 @@ model Book {
   pagesAmount     Int      @map("pages_amount") @db.UnsignedInt
   description     String   @db.Text
   imagePath       String   @db.VarChar(255)
+  qrCodePath      String?  @db.VarChar(255)
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @default(now()) @map("updated_at")
   Loan            Loan[]
