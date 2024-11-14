@@ -101,7 +101,7 @@ model UserNotification {
 
 model UserInformation {
   id                   BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  userId               BigInt  @map("user_id") @db.UnsignedBigInt
+  userId               BigInt  @unique @map("user_id") @db.UnsignedBigInt
   user                 User    @relation(fields: [userId], references: [id])
   identificationNumber String  @map("identification_number") @db.VarChar(255)
   telephone            String  @db.VarChar(255)
