@@ -9,6 +9,7 @@ import { LoanModule } from './loan/loan.module';
 import { NotificationModule } from './notification/notification.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { GoogleAuthenticationModule } from './authentication/google-authentication/google-authentication.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { join } from 'path';
     UserModule,
     LoanModule,
     NotificationModule,
+    GoogleAuthenticationModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public', 'assets'), // Pastikan path ini benar
       serveRoot: '/public/assets/', // Akses URL file statis}),
