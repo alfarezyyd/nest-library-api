@@ -48,7 +48,7 @@ export class InformationService {
   async findOne(currentUser: User): Promise<UserInformation> {
     return this.prismaService.userInformation.findFirst({
       where: {
-        id: currentUser.id,
+        userId: currentUser.id,
       },
     });
   }
