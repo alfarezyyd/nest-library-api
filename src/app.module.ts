@@ -10,6 +10,7 @@ import { NotificationModule } from './notification/notification.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { GoogleAuthenticationModule } from './authentication/google-authentication/google-authentication.module';
+import { InformationModule } from './information/information.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GoogleAuthenticationModule } from './authentication/google-authenticati
       rootPath: join(__dirname, '..', 'public', 'assets'), // Pastikan path ini benar
       serveRoot: '/public/assets/', // Akses URL file statis}),
     }),
+    InformationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
