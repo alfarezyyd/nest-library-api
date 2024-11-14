@@ -35,8 +35,15 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAllActivityByUser(currentUser: User) {
+    return this.prismaService.loan.findMany({
+      where: {
+        userId: currentUser.id,
+      },
+      include: {
+        book: true,
+      },
+    });
   }
 
   async findOne(email: string) {

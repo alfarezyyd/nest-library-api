@@ -10,8 +10,10 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CurrentUser } from '../authentication/decorator/current-user.decorator';
+import { User } from '@prisma/client';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -20,9 +22,13 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Get('')
+  async findAllActivityByUser(@CurrentUser() currentUser: User) {
+    return {
+      result: {
+        data: await this.userService.findAllActivityByUser(currentUser),
+      },
+    };
   }
 
   @Patch(':id')
