@@ -43,16 +43,23 @@ export class BookService {
     });
 
     // Generate QR code URL
-    const generatedBase64QrCode = await QRCode.toDataURL(
-      `${this.configService.get<string>('CLIENT_BASE_URL')}/books/${bookPrisma.id}`,
+    console.log(bookPrisma.id);
+    const generatedBase64QrCode = await QRCode.toDataURL(`${bookPrisma.id}`);
+    // Ambil ekstensi dari Data URL (setelah 'data:image/')
+    const imageExtension = generatedBase64QrCode.match(
+      /data:image\/(.*?);base64,/,
     );
+    if (!imageExtension) {
+      throw new Error('Failed to detect image format');
+    }
+    const fileExtension = imageExtension[1]; // ekstensi gambar seperti 'png', 'jpeg', dll
 
     const base64Data = generatedBase64QrCode.replace(
       /^data:image\/png;base64,/,
       '',
     );
 
-    const generatedQrCodeFileName = `${uuid()}-${bookPrisma.id}`;
+    const generatedQrCodeFileName = `${uuid()}-${bookPrisma.id}.${fileExtension}`; // Tambahkan ekstensi
 
     // Pastikan direktori sudah ada
     const qrCodeDirectory = `${this.configService.get<string>('MULTER_DEST')}/qr-code/`;
