@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import ValidationService from '../common/validation.service';
 import { InformationValidation } from './information.validation';
 import PrismaService from '../common/prisma.service';
-import { User } from '@prisma/client';
+import { User, UserInformation } from '@prisma/client';
 import { CommonHelper } from '../helper/common.helper';
 
 @Injectable()
@@ -44,8 +44,12 @@ export class InformationService {
     return `This action returns all information`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} information`;
+  async findOne(currentUser: User): Promise<UserInformation> {
+    return this.prismaService.userInformation.findFirstOrThrow({
+      where: {
+        id: currentUser.id,
+      },
+    });
   }
 
   update(id: number, updateInformationDto: UpdateInformationDto) {

@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,7 +14,7 @@ import { CreateInformationDto } from './dto/create-information.dto';
 import { UpdateInformationDto } from './dto/update-information.dto';
 import { WebResponse } from '../model/web.response';
 import { CurrentUser } from '../authentication/decorator/current-user.decorator';
-import { User } from '@prisma/client';
+import { User, UserInformation } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('information')
@@ -39,17 +39,18 @@ export class InformationController {
     };
   }
 
-  @Get()
-  findAll() {
-    return this.informationService.findAll();
+  @Get('')
+  async findOne(
+    @CurrentUser() currentUser: User,
+  ): Promise<WebResponse<UserInformation>> {
+    return {
+      result: {
+        data: await this.informationService.findOne(currentUser),
+      },
+    };
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.informationService.findOne(+id);
-  }
-
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateInformationDto: UpdateInformationDto,
