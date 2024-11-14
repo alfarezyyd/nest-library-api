@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/swagger';
 import { CreateGoogleAuthenticationDto } from './create-google-authentication.dto';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class UpdateGoogleAuthenticationDto extends PartialType(CreateGoogleAuthenticationDto) {}
+export class UpdateGoogleAuthenticationDto extends PartialType(
+  CreateGoogleAuthenticationDto,
+) {}
