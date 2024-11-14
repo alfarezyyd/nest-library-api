@@ -17,13 +17,23 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Post()
-  triggerNotification(@CurrentUser() currentUser: User) {
-    return this.notificationService.handleTriggerNotification(currentUser);
+  async triggerNotification(@CurrentUser() currentUser: User) {
+    return {
+      result: {
+        data: await this.notificationService.handleTriggerNotification(
+          currentUser,
+        ),
+      },
+    };
   }
 
   @Get()
-  findAll() {
-    return this.notificationService.findAll();
+  async findAllByUserId(@CurrentUser() currentUser: User) {
+    return {
+      result: {
+        data: await this.notificationService.findAllByUserId(currentUser),
+      },
+    };
   }
 
   @Get(':id')
