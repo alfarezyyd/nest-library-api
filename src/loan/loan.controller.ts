@@ -32,8 +32,12 @@ export class LoanController {
   }
 
   @Get()
-  findAll() {
-    return this.loanService.findAll();
+  async findAll(): Promise<WebResponse<any>> {
+    return {
+      result: {
+        data: await this.loanService.findAll(),
+      },
+    };
   }
 
   @Get(':id')
@@ -47,6 +51,7 @@ export class LoanController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLoanDto: UpdateLoanDto,
   ): Promise<WebResponse<boolean>> {
+    console.log(updateLoanDto);
     return {
       result: {
         data: await this.loanService.handleReturn(

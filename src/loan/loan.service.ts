@@ -42,7 +42,12 @@ export class LoanService {
   }
 
   findAll() {
-    return `This action returns all loan`;
+    return this.prismaService.loan.findMany({
+      include: {
+        user: true,
+        book: true,
+      },
+    });
   }
 
   findOne(id: number) {
