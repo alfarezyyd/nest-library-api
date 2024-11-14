@@ -18,7 +18,7 @@ import { CurrentUser } from '../authentication/decorator/current-user.decorator'
 import { User, UserInformation } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('information')
+@Controller('informations')
 export class InformationController {
   constructor(private readonly informationService: InformationService) {}
 
