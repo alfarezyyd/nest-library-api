@@ -1,14 +1,6 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Redirect,
-  Res,
-  Response,
-} from '@nestjs/common';
+import { Controller, Get, Query, Redirect } from '@nestjs/common';
 import { GoogleAuthenticationService } from './google-authentication.service';
-import { Public } from '../decorator/set-metadata.decorator';
-import { NoVerifiedEmail } from '../decorator/set-no-verified-email.decorator';
+import { Public } from '../decorator/public.decorator';
 
 @Controller('authentication/google')
 export class GoogleAuthenticationController {
@@ -17,7 +9,6 @@ export class GoogleAuthenticationController {
   ) {}
 
   @Public()
-  @NoVerifiedEmail(true)
   @Get('')
   @Redirect('', 301)
   async redirectGoogleAuthentication() {
@@ -27,7 +18,6 @@ export class GoogleAuthenticationController {
   }
 
   @Public()
-  @NoVerifiedEmail(true)
   @Get('callback')
   @Redirect('', 302)
   async handleGoogleAuthenticationCallback(@Query('code') code: string) {
