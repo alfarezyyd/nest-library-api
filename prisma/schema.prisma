@@ -95,9 +95,12 @@ model UserNotification {
   id                 BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
   userId             BigInt                 @map("user_id") @db.UnsignedBigInt
   user               User                   @relation(fields: [userId], references: [id])
+  headerMessage      String                 @db.VarChar(255)
   message            String                 @db.VarChar(255)
   sendAt             DateTime               @default(now()) @map("send_at")
   notificationStatus UserNotificationStatus @default(UNREAD) @map("notification_status")
+
+  @@map("user_notifications")
 }
 
 model UserInformation {
