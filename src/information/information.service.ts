@@ -26,7 +26,7 @@ export class InformationService {
       InformationValidation.SAVE,
       createInformationDto,
     );
-    const generatedFileName = CommonHelper.handleSaveFile(
+    const generatedFileName = await CommonHelper.handleSaveFile(
       this.configService,
       uploadedFile,
       'information-resources',
@@ -34,7 +34,7 @@ export class InformationService {
     await this.prismaService.userInformation.create({
       data: {
         ...validatedCreateInformationDto,
-        user: currentUser,
+        userId: currentUser.id,
         profilePath: generatedFileName,
       },
     });
