@@ -65,17 +65,18 @@ enum LoanStatus {
 }
 
 model Loan {
-  id         BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
-  userId     BigInt     @map("user_id") @db.UnsignedBigInt
-  user       User       @relation(fields: [userId], references: [id])
-  bookId     BigInt     @map("book_id") @db.UnsignedBigInt
-  book       Book       @relation(fields: [bookId], references: [id])
-  loanDate   DateTime   @map("loan_date") @db.Date
-  returnDate DateTime?  @map("return_date") @db.Date
-  loanStatus LoanStatus @default(BORROWED) @map("loan_status")
-  amercement Int        @default(0) @db.UnsignedInt
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @default(now()) @map("updated_at")
+  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  userId           BigInt             @map("user_id") @db.UnsignedBigInt
+  user             User               @relation(fields: [userId], references: [id])
+  bookId           BigInt             @map("book_id") @db.UnsignedBigInt
+  book             Book               @relation(fields: [bookId], references: [id])
+  loanDate         DateTime           @map("loan_date") @db.Date
+  returnDate       DateTime?          @map("return_date") @db.Date
+  loanStatus       LoanStatus         @default(BORROWED) @map("loan_status")
+  amercement       Int                @default(0) @db.UnsignedInt
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @map("updated_at")
+  UserNotification UserNotification[]
 
   @@map("loans")
 }
@@ -95,6 +96,8 @@ model UserNotification {
   id                 BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
   userId             BigInt                 @map("user_id") @db.UnsignedBigInt
   user               User                   @relation(fields: [userId], references: [id])
+  loanId             BigInt                 @map("loan_id") @db.UnsignedBigInt
+  loan               Loan                   @relation(fields: [loanId], references: [id])
   headerMessage      String                 @db.VarChar(255)
   message            String                 @db.VarChar(255)
   sendAt             DateTime               @default(now()) @map("send_at")
