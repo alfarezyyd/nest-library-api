@@ -39,4 +39,5 @@ export class CommonHelper {
 
     return firstImageBase64 === secondImageBase64;
   }
+
 }
