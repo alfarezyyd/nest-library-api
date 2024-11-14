@@ -30,13 +30,28 @@ export class NotificationService {
         book: true,
       },
     });
-    console.log(loansPrisma, currentUser);
+    const allLoanIds = new Set(
+      (
+        await this.prismaService.userNotification.findMany({
+          where: {
+            userId: currentUser.id,
+          },
+          select: {
+            loanId: true,
+          },
+        })
+      ).map((item) => item.loanId),
+    );
+    const filteredLoans = loansPrisma.filter(
+      (loan) => !allLoanIds.has(loan.id),
+    );
     const notificationPayload = [];
-    for (const loanPrisma of loansPrisma) {
+    for (const loanPrisma of filteredLoans) {
       notificationPayload.push({
         userId: currentUser.id,
         headerMessage: `Mohon Kembalikan Buku`,
         message: `Tolong kembalikan buku ${loanPrisma.book.title}, jika Anda melewati jatuh tempo maka denda akan dikenakan`,
+        loanId: loanPrisma.id,
       });
     }
     await this.prismaService.userNotification.createMany({
@@ -50,7 +65,6 @@ export class NotificationService {
       where: {
         userId: currentUser.id,
       },
-      include: {},
     });
   }
 
