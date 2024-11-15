@@ -35,7 +35,14 @@ export class BookController {
   }
 
   @Get()
-  async findAll(): Promise<WebResponse<any>> {
+  async findAll(@Query('search') search?: string): Promise<WebResponse<any>> {
+    if (search) {
+      return {
+        result: {
+          data: await this.bookService.searchBookByQuery(search),
+        },
+      };
+    }
     return {
       result: {
         data: await this.bookService.findAll(),
@@ -71,15 +78,6 @@ export class BookController {
     return {
       result: {
         data: await this.bookService.findAllByCategoryId(id),
-      },
-    };
-  }
-
-  @Get()
-  async searchBook(@Query() search?: string) {
-    return {
-      result: {
-        data: await this.bookService.searchBookByQuery(search),
       },
     };
   }
