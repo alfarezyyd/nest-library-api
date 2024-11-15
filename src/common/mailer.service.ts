@@ -45,6 +45,7 @@ export class MailerService {
       },
       to: emailTransfer.recipients,
       subject: emailTransfer.subject,
+      text: emailTransfer.text,
       html: htmlBody,
     };
     try {
