@@ -77,7 +77,7 @@ export class InformationService {
           throw new NotFoundException('User information not found');
         });
       const isImageSame = await CommonHelper.compareImagesFromUpload(
-        `${this.configService.get<string>('MULTER_DEST')}/information -resources/${userInformation.profilePath}`,
+        `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
         uploadedFile,
       );
       let profilePath = userInformation.profilePath;
