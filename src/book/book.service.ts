@@ -90,6 +90,9 @@ export class BookService {
       include: {
         category: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
