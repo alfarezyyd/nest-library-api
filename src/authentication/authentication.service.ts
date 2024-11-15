@@ -12,6 +12,7 @@ import { CommonHelper } from '../helper/common.helper';
 import PrismaService from '../common/prisma.service';
 import { MailerService } from '../common/mailer.service';
 import { VerifyTokenDto } from './dto/verify-token.dto';
+import { ResetPassword } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -126,5 +127,30 @@ export class AuthenticationService {
         ))
       );
     });
+  }
+
+  async handleResetPassword(resetPassword: ResetPassword) {
+    const validatedResetPasswordDto = this.validationService.validate(
+      AuthenticationValidation.RESET_PASSWORD,
+      resetPassword,
+    );
+    this.prismaService.user
+      .findFirstOrThrow({
+        where: {
+          email: resetPassword.email,
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('User not found');
+      });
+    await this.prismaService.user.updateMany({
+      where: {
+        email: resetPassword.email,
+      },
+      data: {
+        password: validatedResetPasswordDto.password,
+      },
+    });
+    return true;
   }
 }

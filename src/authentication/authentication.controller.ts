@@ -6,6 +6,7 @@ import { Public } from './decorator/public.decorator';
 import { WebResponse } from '../model/web.response';
 import { ResponseAuthenticationDto } from './dto/response-authentication.dto';
 import { VerifyTokenDto } from './dto/verify-token.dto';
+import { ResetPassword } from './dto/reset-password.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -56,6 +57,18 @@ export class AuthenticationController {
       result: {
         data: await this.authenticationService.verifyOneTimePasswordToken(
           verifyToken,
+        ),
+      },
+    };
+  }
+
+  @Public()
+  @Post('reset-password')
+  async resetPassword(@Body() resetPassword: ResetPassword) {
+    return {
+      result: {
+        data: await this.authenticationService.handleResetPassword(
+          resetPassword,
         ),
       },
     };
