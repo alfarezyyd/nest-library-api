@@ -49,18 +49,6 @@ export class AuthenticationService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} authentication`;
-  }
-
-  update(id: number, updateAuthenticationDto: SignUpDto) {
-    return `This action updates a #${id} authentication`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} authentication`;
-  }
-
   async generateOneTimePasswordVerification(
     currentUser: User,
   ): Promise<string> {
@@ -99,7 +87,7 @@ export class AuthenticationService {
   async verifyOneTimePasswordToken(
     currentUser: User,
     oneTimePassword: string,
-  ): Promise<string> {
+  ): Promise<boolean> {
     return this.prismaService.$transaction(async (prismaTransaction) => {
       const validOneTimePasswordToken: OneTimePasswordToken =
         await prismaTransaction.oneTimePasswordToken.findFirstOrThrow({
@@ -110,17 +98,13 @@ export class AuthenticationService {
             },
           },
         });
-      if (
+      return !!(
         validOneTimePasswordToken &&
         (await bcrypt.compare(
           oneTimePassword,
           validOneTimePasswordToken.hashedToken,
         ))
-      ) {
-        return 'One time password verified';
-      } else {
-        return 'One time password not valid';
-      }
+      );
     });
   }
 }
