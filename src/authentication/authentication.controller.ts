@@ -1,10 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { Public } from './decorator/public.decorator';
 import { WebResponse } from '../model/web.response';
 import { ResponseAuthenticationDto } from './dto/response-authentication.dto';
+import { CurrentUser } from './decorator/current-user.decorator';
+import { User } from '@prisma/client';
+import { VerifyTokenDto } from './dto/verify-token.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -28,6 +31,34 @@ export class AuthenticationController {
     return {
       result: {
         data: await this.authenticationService.handleSignUp(signUp),
+      },
+    };
+  }
+
+  @Get('generate-otp')
+  async generateOneTimePasswordVerification(
+    @CurrentUser() currentUser: User,
+  ): Promise<WebResponse<string>> {
+    return {
+      result: {
+        data: await this.authenticationService.generateOneTimePasswordVerification(
+          currentUser,
+        ),
+      },
+    };
+  }
+
+  @Post('verify-otp')
+  async verifyOneTimePasswordVerification(
+    @CurrentUser() loggedUser: User,
+    verifyToken: VerifyTokenDto,
+  ): Promise<WebResponse<string>> {
+    return {
+      result: {
+        data: await this.authenticationService.verifyOneTimePasswordToken(
+          loggedUser,
+          verifyToken.token,
+        ),
       },
     };
   }
