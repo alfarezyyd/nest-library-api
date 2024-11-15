@@ -57,6 +57,8 @@ model User {
   Loan             Loan[]
   UserNotification UserNotification[]
   UserInformation  UserInformation[]
+
+  @@map("users")
 }
 
 enum LoanStatus {
