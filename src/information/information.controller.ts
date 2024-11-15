@@ -29,7 +29,6 @@ export class InformationController {
     @Body() createInformationDto: CreateInformationDto,
     @UploadedFile() uploadedFile: Express.Multer.File,
   ): Promise<WebResponse<boolean>> {
-    console.log(uploadedFile);
     return {
       result: {
         data: await this.informationService.create(
