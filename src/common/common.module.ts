@@ -9,6 +9,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { MulterService } from './multer.service';
 import { HttpModule } from '@nestjs/axios';
 import { AxiosService } from './axios.service';
+import { MailerService } from './mailer.service';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { AxiosService } from './axios.service';
       useClass: AxiosService,
     }),
   ],
-  providers: [PrismaService, ValidationService],
-  exports: [PrismaService, ValidationService, HttpModule],
+  providers: [PrismaService, ValidationService, MailerService],
+  exports: [PrismaService, ValidationService, HttpModule, MailerService],
 })
 export class CommonModule {}
