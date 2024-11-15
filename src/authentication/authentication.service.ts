@@ -60,7 +60,6 @@ export class AuthenticationService {
           generatedOneTimePassword,
           10,
         );
-
         await prismaTransaction.oneTimePasswordToken.create({
           data: {
             userId: currentUser['id'],
@@ -96,6 +95,9 @@ export class AuthenticationService {
             expiresAt: {
               gte: new Date(),
             },
+          },
+          orderBy: {
+            id: 'desc',
           },
         });
       return !!(

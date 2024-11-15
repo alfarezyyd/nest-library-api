@@ -51,7 +51,7 @@ export class AuthenticationController {
   @Post('verify-otp')
   async verifyOneTimePasswordVerification(
     @CurrentUser() loggedUser: User,
-    verifyToken: VerifyTokenDto,
+    @Body() verifyToken: VerifyTokenDto,
   ): Promise<WebResponse<boolean>> {
     return {
       result: {
