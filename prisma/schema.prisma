@@ -47,16 +47,17 @@ enum Role {
 }
 
 model User {
-  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
-  fullName         String             @map("full_name") @db.VarChar(255)
-  email            String             @db.VarChar(255)
-  password         String?            @db.VarChar(255)
-  role             Role               @default(MEMBER)
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @map("updated_at")
-  Loan             Loan[]
-  UserNotification UserNotification[]
-  UserInformation  UserInformation[]
+  id                   BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
+  fullName             String                 @map("full_name") @db.VarChar(255)
+  email                String                 @db.VarChar(255)
+  password             String?                @db.VarChar(255)
+  role                 Role                   @default(MEMBER)
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @default(now()) @map("updated_at")
+  Loan                 Loan[]
+  UserNotification     UserNotification[]
+  UserInformation      UserInformation[]
+  OneTimePasswordToken OneTimePasswordToken[]
 
   @@map("users")
 }
@@ -119,4 +120,15 @@ model UserInformation {
   profilePath          String? @map("profile_path") @db.VarChar(255)
 
   @@map("user_informations")
+}
+
+model OneTimePasswordToken {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  userId      BigInt   @map("user_id") @db.UnsignedBigInt
+  User        User     @relation(fields: [userId], references: [id])
+  hashedToken String   @map("hashed_token") @db.VarChar(255)
+  expiresAt   DateTime @map("expires_at") @db.Timestamp()
+  isValid     Boolean  @default(false) @map("is_valid")
+
+  @@map("one_time_password_tokens")
 }
