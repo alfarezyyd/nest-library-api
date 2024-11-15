@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import * as fsPromises from 'fs/promises';
 import { HttpException } from '@nestjs/common';
 import * as fs from 'node:fs';
+import * as crypto from 'crypto';
 
 export class CommonHelper {
   static async handleSaveFile(
@@ -40,4 +41,11 @@ export class CommonHelper {
     return firstImageBase64 === secondImageBase64;
   }
 
+  static async generateOneTimePassword(
+    lengthOfPassword: number = 6,
+  ): Promise<string> {
+    const max = Math.pow(10, lengthOfPassword);
+    const randomNumber = crypto.randomInt(0, max);
+    return randomNumber.toString().padStart(lengthOfPassword, '0');
+  }
 }
