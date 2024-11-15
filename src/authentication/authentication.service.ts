@@ -45,7 +45,14 @@ export class AuthenticationService {
   }
 
   async handleSignUp(signUpDto: SignUpDto): Promise<ResponseAuthenticationDto> {
-    const userPrisma: User = await this.userService.create({ ...signUpDto });
+    const hashedGeneratedOneTimePassword = await bcrypt.hash(
+      signUpDto.password,
+      10,
+    );
+    const userPrisma: User = await this.userService.create({
+      ...signUpDto,
+      password: hashedGeneratedOneTimePassword,
+    });
     return {
       accessToken: await this.jwtService.signAsync(userPrisma),
     };
@@ -143,12 +150,16 @@ export class AuthenticationService {
       .catch(() => {
         throw new NotFoundException('User not found');
       });
+    const hashedGeneratedOneTimePassword = await bcrypt.hash(
+      resetPassword.password,
+      10,
+    );
     await this.prismaService.user.updateMany({
       where: {
         email: resetPassword.email,
       },
       data: {
-        password: validatedResetPasswordDto.password,
+        password: hashedGeneratedOneTimePassword,
       },
     });
     return true;
