@@ -52,7 +52,7 @@ export class AuthenticationController {
   async verifyOneTimePasswordVerification(
     @CurrentUser() loggedUser: User,
     verifyToken: VerifyTokenDto,
-  ): Promise<WebResponse<string>> {
+  ): Promise<WebResponse<boolean>> {
     return {
       result: {
         data: await this.authenticationService.verifyOneTimePasswordToken(
