@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -70,6 +71,15 @@ export class BookController {
     return {
       result: {
         data: await this.bookService.findAllByCategoryId(id),
+      },
+    };
+  }
+
+  @Get()
+  async searchBook(@Query() search?: string) {
+    return {
+      result: {
+        data: await this.bookService.searchBookByQuery(search),
       },
     };
   }

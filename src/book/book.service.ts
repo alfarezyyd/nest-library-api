@@ -172,4 +172,59 @@ export class BookService {
       },
     });
   }
+
+  async searchBookByQuery(search: string) {
+    return this.prismaService.book.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              startsWith: search,
+            },
+          },
+          {
+            title: {
+              endsWith: search,
+            },
+          },
+          {
+            author: {
+              startsWith: search,
+            },
+          },
+          {
+            author: {
+              endsWith: search,
+            },
+          },
+          {
+            publisher: {
+              startsWith: search,
+            },
+          },
+          {
+            publisher: {
+              endsWith: search,
+            },
+          },
+          {
+            publicationYear: {
+              startsWith: search,
+            },
+          },
+          {
+            publicationYear: {
+              endsWith: search,
+            },
+          },
+        ],
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }
