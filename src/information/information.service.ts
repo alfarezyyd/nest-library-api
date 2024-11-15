@@ -76,21 +76,29 @@ export class InformationService {
         .catch(() => {
           throw new NotFoundException('User information not found');
         });
-      const isImageSame = await CommonHelper.compareImagesFromUpload(
-        `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
-        uploadedFile,
-      );
       let profilePath = userInformation.profilePath;
-      if (!isImageSame) {
-        fs.unlinkSync(
-          `${this.configService.get<string>('MULTER_DEST')}/information -resources/${userInformation.profilePath}`,
-        );
-        profilePath = await CommonHelper.handleSaveFile(
-          this.configService,
-          uploadedFile,
-          'information-resources',
-        );
+      if (uploadedFile) {
+        let isImageSame = false;
+        if (profilePath !== null) {
+          isImageSame = await CommonHelper.compareImagesFromUpload(
+            `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
+            uploadedFile,
+          );
+        }
+        if (!isImageSame) {
+          if (userInformation.profilePath !== null) {
+            fs.unlinkSync(
+              `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
+            );
+          }
+          profilePath = await CommonHelper.handleSaveFile(
+            this.configService,
+            uploadedFile,
+            'information-resources',
+          );
+        }
       }
+      validatedUpdateInformation['profilePath'] = profilePath;
       await prismaTransaction.userInformation.update({
         where: {
           id,
@@ -98,7 +106,6 @@ export class InformationService {
         },
         data: {
           ...validatedUpdateInformation,
-          profilePath,
         },
       });
       return true;
