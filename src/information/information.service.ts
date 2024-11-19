@@ -8,6 +8,7 @@ import PrismaService from '../common/prisma.service';
 import { User, UserInformation } from '@prisma/client';
 import { CommonHelper } from '../helper/common.helper';
 import * as fs from 'node:fs';
+import { CloudStorageService } from '../common/cloud-storage.service';
 
 @Injectable()
 export class InformationService {
@@ -15,6 +16,7 @@ export class InformationService {
     private readonly configService: ConfigService,
     private readonly validationService: ValidationService,
     private readonly prismaService: PrismaService,
+    private readonly cloudStorage: CloudStorageService,
   ) {}
 
   async create(
@@ -27,11 +29,13 @@ export class InformationService {
       createInformationDto,
     );
     if (uploadedFile) {
+      const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
       validatedCreateInformationDto.profilePath =
         await CommonHelper.handleSaveFile(
           this.configService,
           uploadedFile,
           'information-resources',
+          cloudStorage,
         );
     }
     await this.prismaService.userInformation.create({
@@ -91,10 +95,13 @@ export class InformationService {
               `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
             );
           }
+          const cloudStorage =
+            await this.cloudStorage.loadCloudStorageInstance();
           profilePath = await CommonHelper.handleSaveFile(
             this.configService,
             uploadedFile,
             'information-resources',
+            cloudStorage,
           );
         }
       }

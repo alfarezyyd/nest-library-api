@@ -10,6 +10,7 @@ import * as fs from 'node:fs';
 import { Book } from '@prisma/client';
 import * as QRCode from 'qrcode';
 import { v4 as uuid } from 'uuid';
+import { CloudStorageService } from '../common/cloud-storage.service';
 
 @Injectable()
 export class BookService {
@@ -17,6 +18,7 @@ export class BookService {
     private readonly prismaService: PrismaService,
     private readonly validationService: ValidationService,
     private readonly configService: ConfigService,
+    private readonly cloudStorage: CloudStorageService,
   ) {}
 
   async create(
@@ -27,12 +29,12 @@ export class BookService {
       BookValidation.SAVE,
       createBookDto,
     );
-
-    // Simpan file gambar buku
+    const cloudStorage = await this.cloudStorage.loadCloudStorageInstance(); // Simpan file gambar buku
     const generatedFilePath = await CommonHelper.handleSaveFile(
       this.configService,
       uploadedFile,
       'books-resources',
+      cloudStorage,
     );
 
     const bookPrisma: Book = await this.prismaService.book.create({
@@ -130,10 +132,12 @@ export class BookService {
       fs.unlinkSync(
         `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
       );
+      const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
       imagePath = await CommonHelper.handleSaveFile(
         this.configService,
         uploadedFile,
         'books-resources',
+        cloudStorage,
       );
     }
     await this.prismaService.book.update({
