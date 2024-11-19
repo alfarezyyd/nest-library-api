@@ -38,14 +38,18 @@ export class CommonHelper {
   }
 
   static async compareImagesFromUpload(
-    firstImagePath: string,
+    firstImagePath: string | Buffer,
     secondImageFile: Express.Multer.File,
   ) {
     if (firstImagePath === null) {
       return true;
     }
-    const firstImage = await fsPromises.readFile(firstImagePath);
-
+    let firstImage;
+    if (!Buffer.isBuffer(firstImagePath)) {
+      firstImage = await fsPromises.readFile(firstImagePath);
+    } else {
+      firstImage = firstImagePath;
+    }
     const firstImageBase64 = firstImage.toString('base64');
     const secondImageBase64 = secondImageFile.buffer.toString('base64');
 
