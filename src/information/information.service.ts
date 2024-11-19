@@ -89,14 +89,21 @@ export class InformationService {
             uploadedFile,
           );
         }
+        const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
+
         if (!isImageSame) {
           if (userInformation.profilePath !== null) {
-            fs.unlinkSync(
-              `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
-            );
+            if (this.configService.get<string>('NODE_ENV') === 'PRODUCTION') {
+              await cloudStorage
+                .bucket(this.configService.get<string>('BUCKET_NAME'))
+                .file(`profile/${userInformation.profilePath}`)
+                .delete();
+            } else {
+              fs.unlinkSync(
+                `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
+              );
+            }
           }
-          const cloudStorage =
-            await this.cloudStorage.loadCloudStorageInstance();
           profilePath = await CommonHelper.handleSaveFile(
             this.configService,
             uploadedFile,
