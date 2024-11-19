@@ -17,7 +17,7 @@ export class CommonHelper {
     if (configService.get<string>('NODE_ENV') === 'PRODUCTION') {
       await cloudStorage
         .bucket(configService.get<string>('BUCKET_NAME'))
-        .file(`profile/${generatedSingleFileName}`)
+        .file(`${folderName}/${generatedSingleFileName}`)
         .save(singleFile.buffer, {
           contentType: singleFile.mimetype,
         });

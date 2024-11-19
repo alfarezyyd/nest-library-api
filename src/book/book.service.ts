@@ -76,6 +76,17 @@ export class BookService {
       'base64',
     );
 
+    // Upload file lokal ke cloud storage
+    await cloudStorage
+      .bucket(this.configService.get<string>('BUCKET_NAME'))
+      .upload(`${qrCodeDirectory}/${generatedQrCodeFileName}`, {
+        destination: `qr-code/${generatedQrCodeFileName}`, // Tentukan path tujuan di cloud
+        gzip: true, // Opsi jika ingin mengkompres file
+        metadata: {
+          cacheControl: 'public, max-age=31536000', // Tentukan metadata file jika perlu
+        },
+      });
+
     // Simpan path ke QR code ke database
     await this.prismaService.book.update({
       where: { id: bookPrisma.id },
