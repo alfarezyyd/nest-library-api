@@ -82,15 +82,18 @@ export class InformationService {
         });
       let profilePath = userInformation.profilePath;
       if (uploadedFile) {
-        let isImageSame = false;
-        if (profilePath !== null) {
-          isImageSame = await CommonHelper.compareImagesFromUpload(
-            `${this.configService.get<string>('MULTER_DEST')}/information-resources/${userInformation.profilePath}`,
-            uploadedFile,
-          );
-        }
         const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
+        const cloudImageBuffer =
+          await this.cloudStorage.downloadFromCloudStorage(
+            `profile/${userInformation.profilePath}`,
+          );
 
+        const isImageSame = await CommonHelper.compareImagesFromUpload(
+          this.configService.get<string>('NODE_ENV') === 'PRODUCTION'
+            ? cloudImageBuffer
+            : `${this.configService.get<string>('MULTER_DEST')}/books-resources/${userInformation.profilePath}`,
+          uploadedFile,
+        );
         if (!isImageSame) {
           if (userInformation.profilePath !== null) {
             if (this.configService.get<string>('NODE_ENV') === 'PRODUCTION') {
