@@ -14,4 +14,21 @@ export class CloudStorageService {
     }
     return this.STORAGE;
   }
+
+  async downloadFromCloudStorage(filePath: string): Promise<Buffer> {
+    const cloudStorageInstance = await this.loadCloudStorageInstance();
+    const bucket = cloudStorageInstance.bucket(
+      this.configService.get<string>('BUCKET_NAME'),
+    );
+    const file = bucket.file(filePath);
+    const fileStream = file.createReadStream();
+    const chunks: Buffer[] = [];
+
+    return new Promise((resolve, reject) => {
+      fileStream
+        .on('data', (chunk) => chunks.push(chunk))
+        .on('end', () => resolve(Buffer.concat(chunks)))
+        .on('error', reject);
+    });
+  }
 }
