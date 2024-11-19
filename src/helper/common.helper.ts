@@ -4,25 +4,36 @@ import * as fsPromises from 'fs/promises';
 import { HttpException } from '@nestjs/common';
 import * as fs from 'node:fs';
 import * as crypto from 'crypto';
+import { Storage } from '@google-cloud/storage';
 
 export class CommonHelper {
   static async handleSaveFile(
     configService: ConfigService,
     singleFile: Express.Multer.File,
     folderName: string,
+    cloudStorage: Storage,
   ) {
     const generatedSingleFileName = `${uuid()}-${singleFile.originalname}`;
-    const folderPath = `${configService.get<string>('MULTER_DEST')}/${folderName}/`;
-    await fsPromises.mkdir(folderPath, { recursive: true });
-    fs.writeFile(
-      folderPath + generatedSingleFileName,
-      singleFile.buffer,
-      (err) => {
-        if (err) {
-          throw new HttpException(err, 500);
-        }
-      },
-    );
+    if (configService.get<string>('NODE_ENV') === 'PRODUCTION') {
+      await cloudStorage
+        .bucket(configService.get<string>('BUCKET_NAME'))
+        .file(`profile/${generatedSingleFileName}`)
+        .save(singleFile.buffer, {
+          contentType: singleFile.mimetype,
+        });
+    } else {
+      const folderPath = `${configService.get<string>('MULTER_DEST')}/${folderName}/`;
+      await fsPromises.mkdir(folderPath, { recursive: true });
+      fs.writeFile(
+        folderPath + generatedSingleFileName,
+        singleFile.buffer,
+        (err) => {
+          if (err) {
+            throw new HttpException(err, 500);
+          }
+        },
+      );
+    }
     return generatedSingleFileName;
   }
 
