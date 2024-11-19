@@ -34,7 +34,7 @@ export class GoogleAuthenticationController {
     const generatedJWTToken =
       await this.googleAuthenticationService.generateJwtToken(jwtPayload);
     return {
-      url: `http://localhost:3000/auth/login?token=${generatedJWTToken}`,
+      url: `https://next-library-app-liart.vercel.app/auth/login?token=${generatedJWTToken}`,
     };
   }
 }
