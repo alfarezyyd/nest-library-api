@@ -123,16 +123,30 @@ export class BookService {
       .catch(() => {
         throw new NotFoundException('Book not found');
       });
+    const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
+
+    const cloudImageBuffer = await this.cloudStorage.downloadFromCloudStorage(
+      `profile/${bookPrisma.imagePath}`,
+    );
+
     const isImageSame = await CommonHelper.compareImagesFromUpload(
-      `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+      this.configService.get<string>('NODE_ENV') === 'PRODUCTION'
+        ? cloudImageBuffer
+        : `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
       uploadedFile,
     );
     let imagePath = bookPrisma.imagePath;
     if (!isImageSame) {
-      fs.unlinkSync(
-        `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
-      );
-      const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
+      if (this.configService.get<string>('NODE_ENV') === 'PRODUCTION') {
+        await cloudStorage
+          .bucket(this.configService.get<string>('BUCKET_NAME'))
+          .file(`profile/${bookPrisma.imagePath}`)
+          .delete();
+      } else {
+        fs.unlinkSync(
+          `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+        );
+      }
       imagePath = await CommonHelper.handleSaveFile(
         this.configService,
         uploadedFile,
@@ -160,9 +174,18 @@ export class BookService {
       .catch(() => {
         throw new NotFoundException('Book not found');
       });
-    fs.unlinkSync(
-      `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
-    );
+    const cloudStorage = await this.cloudStorage.loadCloudStorageInstance();
+    if (this.configService.get<string>('NODE_ENV') === 'PRODUCTION') {
+      await cloudStorage
+        .bucket(this.configService.get<string>('BUCKET_NAME'))
+        .file(`profile/${bookPrisma.imagePath}`)
+        .delete();
+    } else {
+      fs.unlinkSync(
+        `${this.configService.get<string>('MULTER_DEST')}/books-resources/${bookPrisma.imagePath}`,
+      );
+    }
+
     await this.prismaService.book.delete({
       where: { id },
     });
