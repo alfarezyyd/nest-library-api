@@ -10,6 +10,7 @@ import { MulterService } from './multer.service';
 import { HttpModule } from '@nestjs/axios';
 import { AxiosService } from './axios.service';
 import { MailerService } from './mailer.service';
+import { CloudStorageService } from './cloud-storage.service';
 
 @Module({
   imports: [
@@ -40,7 +41,18 @@ import { MailerService } from './mailer.service';
       useClass: AxiosService,
     }),
   ],
-  providers: [PrismaService, ValidationService, MailerService],
-  exports: [PrismaService, ValidationService, HttpModule, MailerService],
+  providers: [
+    PrismaService,
+    ValidationService,
+    MailerService,
+    CloudStorageService,
+  ],
+  exports: [
+    PrismaService,
+    ValidationService,
+    HttpModule,
+    MailerService,
+    CloudStorageService,
+  ],
 })
 export class CommonModule {}
